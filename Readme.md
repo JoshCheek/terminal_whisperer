@@ -3,6 +3,25 @@ Terminal Whisperer
 
 So I don't have to keep dropping escape sequences into print statements.
 
+Examples
+--------
+
+Winsize will tell you the height and width of the terminal window,
+only requerying when the window changes size.
+
+```ruby
+require 'terminal_whisperer/winsize'
+ws = TerminalWhisperer::Winsize.new(
+  instream: $stdin,
+  trap:     Kernel.method(:trap),
+  kill:     Process.method(:kill),
+)
+10.times do
+  p width: ws.width, height: ws.height
+  sleep 1
+end
+```
+
 MIT License
 -----------
 

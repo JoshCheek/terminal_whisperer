@@ -20,25 +20,27 @@ module TerminalWhisperer
     end
 
     def width
-      get_size :width
+      ensure_sizes
+      @width
     end
 
     def height
-      get_size :height
+      ensure_sizes
+      @height
     end
 
     private
 
     attr_accessor :instream, :register_trap, :their_trap, :invoke_trap
 
-    def get_size(which)
-      @sizes ||= Hash[[:height, :width].zip(instream.winsize)]
-      @sizes.fetch which
+    def ensure_sizes
+      return if @height && @width
+      @height, @width = instream.winsize
     end
 
     def our_trap
       -> signalno {
-        @sizes = nil
+        @height = @width = nil
         register_trap.call('WINCH', their_trap)
         invoke_trap.call 'WINCH', Process.pid
         register_trap.call('WINCH', our_trap)

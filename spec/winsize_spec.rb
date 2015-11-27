@@ -1,7 +1,7 @@
 require 'terminal_whisperer/winsize'
 
 class WsAssert
-  def initialize(width:,height:)
+  def initialize(width:, height:)
     @num_times_checked = 0
     @instream = Instream.new width: width, height: height do
       @num_times_checked += 1
@@ -15,9 +15,9 @@ class WsAssert
     )
   end
 
-  def has_size!(width:, height:)
-    expect(@winsize.width).to  eq width
-    expect(@winsize.height).to eq height
+  def has_size!(width:nil, height:nil)
+    expect(@winsize.width).to  eq width  if width
+    expect(@winsize.height).to eq height if height
   end
 
   def change_size(width:, height:)
@@ -91,6 +91,16 @@ RSpec.describe 'Winsize' do
   it 'knows the width values of the current window' do
     ws = WsAssert.new width: width, height: height
     ws.has_size!      width: width, height: height
+  end
+
+  it 'does not matter which order it is asked in' do
+    ws = WsAssert.new width:  width, height: height
+    ws.has_size!      width:  width
+    ws.has_size!      height: height
+
+    ws = WsAssert.new width:  width, height: height
+    ws.has_size!      height: height
+    ws.has_size!      width:  width
   end
 
   it 'does not recheck width and height every time it is asked' do
