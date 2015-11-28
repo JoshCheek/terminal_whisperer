@@ -6,7 +6,7 @@ module SpecHelper
     include RSpec::Matchers
     def initialize(width:, height:)
       @num_times_checked = 0
-      @instream = Instream.new width: width, height: height do
+      @instream = Instream.new width: width, height: height, partial_reads:[] do
         @num_times_checked += 1
       end
 

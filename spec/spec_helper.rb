@@ -2,9 +2,20 @@ module SpecHelper
 end
 
 class SpecHelper::Instream
-  attr_writer :width, :height
-  def initialize(width:,height:, &on_check)
-    self.width, self.height, @on_check = width, height, on_check
+  attr_writer :partial_reads, :content, :width, :height
+  def initialize(partial_reads:, width:80, height:40, &on_check)
+    self.partial_reads, self.width, self.height, @on_check = partial_reads, width, height, on_check
+  end
+
+  def eof?
+    @partial_reads.empty?
+  end
+
+  def read_partial(n)
+    str = @partial_reads.shift
+    result, remaining = str[0...n], str[n..-1]
+    @partial_reads.unshift remaining if remaining && !remaining.empty?
+    result
   end
 
   def winsize
